@@ -1,13 +1,14 @@
 // SPDX-License-Identifier: SEE LICENSE IN LICENSE
-pragma solidity ^0.8.12;
+pragma solidity 0.8.19;
 
-contract MyToken {
-    string _name; // Token Name
-    string _symbol; // Token Symbol
-    uint constant DECIMAL = 18; // Token decimal
-    uint _totalSupply; // Total Supply of Token to be in circulation
+contract myERC20Token {
+    string public name = "myERC20Token"; // Token Name
+    string public symbol = "MET"; // Token Symbol
+    uint public constant DECIMAL = 18; // Token decimal
+    uint256 public totalSupply = 1000000; // Total Supply of Token to be in circulation
+    address public owner; 
 
-    mapping(address => uint) _balance;
+    mapping(address => uint) balances;
     mapping(address => mapping(address => uint)) _allowance;
 
     event Transfer(address from, address to, uint value);
@@ -18,31 +19,13 @@ contract MyToken {
     );
     event Minted(address to, uint value);
 
-    constructor(string memory name_, string memory symbol_) {
-        // Initializing the name and symbol upon deploynment
-        _name = name_;
-        _symbol = symbol_;
+    constructor() {
+        balances[msg.sender] = totalSupply;
+        owner = msg.sender;
     }
 
-    // ERC20 Token standard functions
-    function name() public view returns (string memory) {
-        return _name;
-    }
-
-    function symbol() public view returns (string memory) {
-        return _symbol;
-    }
-
-    function decimals() public pure returns (uint) {
-        return DECIMAL;
-    }
-
-    function totalSupply() public view returns (uint256) {
-        return _totalSupply;
-    }
-
-    function balanceOf(address _owner) public view returns (uint256 balance) {
-        return _balance[_owner];
+    function balanceOf(address tokenAccount) public view returns (uint256) {
+        return balances[tokenAccount];
     }
 
     // This code block contains logic that manages the transfer of token
@@ -53,8 +36,8 @@ contract MyToken {
         require(_to != address(0), "Cannot transfer to zero address");
         require(_value > 0, "Cannot send zero ether");
         require(balanceOf(msg.sender) > _value, "Not enough balance");
-        _balance[msg.sender] -= _value;
-        _balance[_to] += _value;
+        balances[msg.sender] -= _value;
+        balances[_to] += _value;
         success = true;
         emit Transfer(msg.sender, _to, _value);
     }
@@ -69,7 +52,7 @@ contract MyToken {
         require(_value > 0, "Add to allowance");
         require(allowance(_from, _to) >= _value, "Not enough allowance");
         _allowance[_from][_to] -= _value;
-        _balance[_from] -= _value;
+        balances[_from] -= _value;
         success = true;
         emit Transfer(_from, _to, _value);
     }
@@ -95,8 +78,8 @@ contract MyToken {
     // This code block mints tokens to the contract address generated after deployment and adds minted tokens to the supply in circulation
     function mint(address _to, uint value) external {
         require(_to != address(0), "Cannot mint to zero address");
-        _totalSupply += value;
-        _balance[_to] += value;
+        totalSupply += value;
+        balances[_to] += value;
         emit Minted(_to, value);
     }
 
@@ -105,8 +88,8 @@ contract MyToken {
         require(balanceOf(msg.sender) >= value, "insufficient funds");
         uint amount = value;
         uint burnAmount = (amount * 90) / 100;
-        _balance[msg.sender] -= value;
-        _totalSupply -= burnAmount;
-        _balance[_any] += value - burnAmount; // transfer 10% to any
+        balances[msg.sender] -= value;
+        totalSupply -= burnAmount;
+        balances[_any] += value - burnAmount; // transfer 10% to any
     }
 }
