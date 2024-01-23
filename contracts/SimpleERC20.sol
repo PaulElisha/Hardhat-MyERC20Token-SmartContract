@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: SEE LICENSE IN LICENSE
 pragma solidity 0.8.19;
 
-contract myERC20Token {
-    string public name = "myERC20Token"; // Token Name
-    string public symbol = "MET"; // Token Symbol
+contract SimpleERC20 {
+    string public name = "SimpleERC20"; // Token Name
+    string public symbol = "SEC"; // Token Symbol
     uint public constant DECIMAL = 18; // Token decimal
-    uint256 public totalSupply = 1000000; // Total Supply of Token to be in circulation
+    uint256 public totalSupply = 100_000_000_000_000_000_000; // Total Supply of Token to be in circulation
     address public owner; 
 
     mapping(address => uint) balances;
