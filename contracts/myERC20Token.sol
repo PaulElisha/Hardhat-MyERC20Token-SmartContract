@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: SEE LICENSE IN LICENSE
 pragma solidity 0.8.19;
 
-contract SimpleERC20 {
+contract myERC20Token {
     string public name = "SimpleERC20"; // Token Name
     string public symbol = "SEC"; // Token Symbol
     uint public constant DECIMAL = 18; // Token decimal
